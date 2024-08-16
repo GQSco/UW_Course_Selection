@@ -4,38 +4,28 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
 public class CourseInfo {
-    public static ArrayList<Map<Class, ArrayList<Class>>> getUserCourses(Scanner sc) {
-        System.out.print("Number of classes: ");
-        int courseQuantity = Integer.parseInt(sc.nextLine());
+    public static ArrayList<Map<Class, ArrayList<Class>>> getUserCourses(UserInputHandler userInputHandler) {
+        int courseQuantity = userInputHandler.getCourseQuantity(); // Getting the number of courses
 
         // When making a schedule, all courses are going to have the same year and quarter
-        System.out.print("Year: ");
-        String year = sc.nextLine();
-        System.out.print("Quarter: ");
-        String quarter = sc.nextLine().toUpperCase().substring(0, 3);
+        String year = userInputHandler.getYear();
+        String quarter = userInputHandler.getQuarter();
 
         String[] urls = new String[courseQuantity];
         String[] courseNumbers = new String[courseQuantity];
-        for (int i = 0; i < courseQuantity; i++) {
-            System.out.print("Course " + (i + 1) + " abbreviation (or as it shows in the url): ");
-            String abbrev = sc.nextLine().toLowerCase();
-            System.out.print("Course " + (i + 1) + " number: ");
-            String course_num = sc.nextLine();
 
-            // getting a list of all the urls
-            urls[i] = String.format("https://www.washington.edu/students/timeschd/%s%s/%s.html", quarter, year, abbrev);
-            courseNumbers[i] = course_num;
-        }
+        // Getting the urls and course numbers from each course that the user has selected
+        userInputHandler.gatherCourseDetails(courseQuantity, year, quarter, urls, courseNumbers);
 
         System.out.println("Gathering course information...");
 
+        // Connect to each course website, parse through the course information, and return it
         return gatherCourseInfo(urls, courseNumbers, courseQuantity);
     }
 

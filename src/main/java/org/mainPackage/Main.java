@@ -7,18 +7,29 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
 
-        ArrayList<Map<Class, ArrayList<Class>>> allClasses = CourseInfo.getUserCourses(sc);
+        // Organize getting the users inputs
+        UserInputHandler userInputHandler = new UserInputHandler(sc);
+
+        // Retrieve user courses
+        ArrayList<Map<Class, ArrayList<Class>>> allClasses = CourseInfo.getUserCourses(userInputHandler);
+
+        // Filter courses based on user input
+        ArrayList<Map<Class, ArrayList<Class>>> filteredClasses = Filter.getUserFilters(sc, allClasses);
+
+        // Find the "best" schedule
+        findAndPrintSchedule(filteredClasses);
+
+        sc.close(); // Close the scanner
+    }
+
+    private static void findAndPrintSchedule(ArrayList<Map<Class, ArrayList<Class>>> filteredClasses) {
+        // Get an array list of classes that are in the "best" schedule
+        ArrayList<Class> classes = Schedule.findSchedule(filteredClasses);
 
         System.out.println();
 
-        ArrayList<Map<Class, ArrayList<Class>>> filteredClasses = Filter.getUserFilters(sc, allClasses);
-
-        ArrayList<Class> classes = Schedule.findSchedule(filteredClasses);
-
-       System.out.println();
-
-        if (classes != null) {
-            for (Class c : classes) {
+        if (classes != null) { // If a possible schedule was found
+            for (Class c : classes) { // Print the information of each class
                 System.out.println(c.toString());
             }
         } else {
@@ -26,7 +37,5 @@ public class Main {
         }
 
         System.out.println();
-
-        sc.close(); // Closing the scanner
     }
 }

@@ -1,10 +1,15 @@
 package org.mainPackage;
 
-import java.io.IOException;
 import java.util.*;
+/*
+Subject = CHEMISTRY
+Course = CHEM 142
+Class = LECTURE OR QUIZ
+ */
+
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
         // Organize getting the users inputs

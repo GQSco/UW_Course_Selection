@@ -14,6 +14,7 @@ public class Main {
         // Organize getting the users inputs
         UserInputHandler userInputHandler = new UserInputHandler(sc);
 
+        // TODO add a way to parse courses for UW Bothell and maybe Tacoma
         // Retrieve user courses
         ArrayList<Map<Class, ArrayList<Class>>> allClasses = CourseInfo.getUserCourses(userInputHandler);
 

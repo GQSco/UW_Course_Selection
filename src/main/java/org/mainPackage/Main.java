@@ -3,10 +3,9 @@ package org.mainPackage;
 import java.util.*;
 /*
 Subject = CHEMISTRY
-Course = CHEM 142
+Course = CHEM 142; Courses have to have lectures, but not quizzes
 Class = LECTURE OR QUIZ
  */
-
 
 public class Main {
     public static void main(String[] args) {
@@ -19,7 +18,7 @@ public class Main {
         ArrayList<Map<Class, ArrayList<Class>>> allClasses = CourseInfo.getUserCourses(userInputHandler);
 
         // Filter courses based on user input
-        ArrayList<Map<Class, ArrayList<Class>>> filteredClasses = Filter.getUserFilters(sc, allClasses);
+        ArrayList<Map<Class, ArrayList<Class>>> filteredClasses = Filter.getUserFilters(userInputHandler, allClasses);
 
         // Find the "best" schedule
         findAndPrintSchedule(filteredClasses);

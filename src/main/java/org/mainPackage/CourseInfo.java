@@ -4,50 +4,39 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Scanner;
 
 public class CourseInfo {
-    public static ArrayList<Map<Class, ArrayList<Class>>> getUserCourses(Scanner sc) {
-        System.out.print("Number of classes: ");
-        int courseQuantity = Integer.parseInt(sc.nextLine());
+    public static ArrayList<Map<Class, ArrayList<Class>>> getUserCourses(UserInputHandler userInputHandler) {
+        int courseQuantity = userInputHandler.getCourseQuantity(); // Getting the number of courses
 
-        // When making a schedule, all courses are going to have the same year and quarter
-        System.out.print("Year: ");
-        String year = sc.nextLine();
-        System.out.print("Quarter: ");
-        String quarter = sc.nextLine().toUpperCase().substring(0, 3);
+        // When making a schedule, all classes are going to have the same year and quarter
+        String year = userInputHandler.getYear();
+        String quarter = userInputHandler.getQuarter();
 
         String[] urls = new String[courseQuantity];
         String[] courseNumbers = new String[courseQuantity];
-        for (int i = 0; i < courseQuantity; i++) {
-            System.out.print("Course " + (i + 1) + " abbreviation (or as it shows in the url): ");
-            String abbrev = sc.nextLine().toLowerCase();
-            System.out.print("Course " + (i + 1) + " number: ");
-            String course_num = sc.nextLine();
 
-            // getting a list of all the urls
-            urls[i] = String.format("https://www.washington.edu/students/timeschd/%s%s/%s.html", quarter, year, abbrev);
-            courseNumbers[i] = course_num;
-        }
+        // Getting the urls and course numbers from each course that the user has selected
+        userInputHandler.gatherCourseDetails(courseQuantity, year, quarter, urls, courseNumbers);
 
         System.out.println("Gathering course information...");
 
+        // Connect to each course website, parse through the course information, and return it
         return gatherCourseInfo(urls, courseNumbers, courseQuantity);
     }
 
     private static ArrayList<Map<Class, ArrayList<Class>>> gatherCourseInfo(String[] urls, String[] courseNumbers, int courseQuantity) {
 
-        // Get all the courses' classes
+        // Create a 2D ArrayList of all the classes, separated by the course
         ArrayList<ArrayList<Class>> courses = new ArrayList<>();
         for (int i = 0; i < courseQuantity; i++) {
-            courses.add(CourseInfo.getClasses(urls[i], courseNumbers[i]));
+            courses.add(CourseInfo.getClasses(urls[i], courseNumbers[i])); // Get all the courses classes
         }
 
-        // Organize the ArrayList<ArrayList<Class>> to a more organized dictionary
+        // Organize the ArrayList<ArrayList<Class>> into a dictionary
         ArrayList<Map<Class, ArrayList<Class>>> allClasses = new ArrayList<>();
         for (ArrayList<Class> course : courses) {
             Map<Class, ArrayList<Class>> dict = ClassUtils.toDictionary(course);
@@ -61,21 +50,28 @@ public class CourseInfo {
         ArrayList<Class> classes = new ArrayList<>();
 
         try {
+            // Connect to the subject's time information website
             Document doc = Jsoup.connect(url).get();
             System.out.println("Connected to: " + url);
 
-            Elements courses = doc.select("table[style=border:solid 1px #999;margin-bottom:4px]");
+            // Parse through the HTML of the website to get class info
+            Elements courses = doc.select("table[style=border:solid 1px #999;margin-bottom:4px]"); // Selecting all the courses
             Element startCourse = courses.select("table:contains(" + courseNum + ")").first(); // Select the table before the classes of the focus course
-            Element endCourse = selectNextCourse(courses, startCourse);
+            Element endCourse = selectNextCourse(courses, startCourse); // Select the table after the classes of the focus course
 
             if (startCourse != null) { // If the course has been found
                 System.out.println("Selected: " + startCourse.text());
+
+                 //All the classes for the course in the HTML File are tables and can be found in between the startCourse and endCourse tables
+                 //The startCourse table it the table of the selected course, while the endCourse table it the table after
                 parseClassesBetween(doc.select("table"), startCourse, endCourse, classes);
+
             } else {
                 System.out.println("Unable to find course number: " + courseNum);
             }
 
         } catch (IOException e) {
+            System.out.println("Whar??"); // Whar??
             System.out.println("Error: " + e);
         }
 
@@ -105,8 +101,8 @@ public class CourseInfo {
             }
 
             if (withinRange) {
-                String[] info = table.text().split("\\s+");
-                Class c = parseClassInfo(info);
+                String[] info = table.text().split("\\s+"); // Split all the course information into an array
+                Class c = parseClassInfo(info); // Parse through the array to grab important info
                 classes.add(c);
             }
 
@@ -117,6 +113,9 @@ public class CourseInfo {
     }
 
     private static Class parseClassInfo(String[] info) {
+        // I hate this stupid ass fucking function, but it works
+        // The course website is awful so parsing through it is a pain in the ass
+
         String sln = "";
         String section = "";
         String type = "Lecture";

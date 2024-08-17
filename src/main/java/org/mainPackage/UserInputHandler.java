@@ -36,4 +36,35 @@ public class UserInputHandler {
             courseNumbers[i] = course_num;
         }
     }
+
+    public boolean getExcludeFull(){
+        System.out.print("Exclude full classes (Y/N): ");
+        return sc.nextLine().equalsIgnoreCase("Y");
+    }
+
+    public boolean getExcludeClosed(){
+        System.out.print("Exclude Closed classes (Y/N): ");
+        return sc.nextLine().equalsIgnoreCase("Y");
+    }
+
+    public int getStartTime(){
+        System.out.print("Start time (without colon ex. \"830\"): ");
+        return Integer.parseInt(sc.nextLine());
+    }
+
+    public int getBlockOutCount(){
+        System.out.print("Number of Block-out times: ");
+        return Integer.parseInt(sc.nextLine());
+    }
+
+    public String[] getBlockOutTimes(int numBOT){
+        String[] blockOutTimes = new String[numBOT];
+
+        for (int i = 0; i < numBOT; i++) {
+            System.out.print("Enter block-out time #" + (i + 1) + ": ");
+            blockOutTimes[i] = sc.nextLine();
+        }
+
+        return blockOutTimes;
+    }
 }

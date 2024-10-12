@@ -39,8 +39,11 @@ public class Filter {
                         // Get a list of the valid quizzes
                         ArrayList<Class> quizzes = filterValidQuizzes(dict.get(lecture), startTime, excludeFull, excludeClosed, blockOutTimes);
 
-                    // Add the valid lecture and quizzes to a Map<Class, ArrayList<Class>>
-                    newDict.put(lecture, quizzes);
+                        // If the method didn't filter all quizzes that the lecture has
+                        if (quizzes != null) {
+                            // Add the valid lecture and quizzes to a Map<Class, ArrayList<Class>>
+                            newDict.put(lecture, quizzes);
+                        }
                 }
             }
 
@@ -54,6 +57,11 @@ public class Filter {
     private static ArrayList<Class> filterValidQuizzes(ArrayList<Class> quizzes, int startTime, boolean excludeFull, boolean excludeClosed, String[] blockOutTimes) {
         ArrayList<Class> validQuizzes = new ArrayList<>();
 
+        // If the lecture has no quizzes
+        if (quizzes.isEmpty()) {
+            return validQuizzes; // Immediately return the empty Arraylist
+        }
+
         for (Class quiz : quizzes) {
             // Determine if the quiz is considered valid with the user's restrictions
             boolean validQuiz = validClass(quiz, startTime, excludeFull, excludeClosed, blockOutTimes);
@@ -62,6 +70,11 @@ public class Filter {
             if (validQuiz) {
                 validQuizzes.add(quiz);
             }
+        }
+
+        // If the filter got rid of all available quizzes where a lecture had to have a quiz
+        if (validQuizzes.isEmpty()) {
+            return null; // Return null indicating that the lecture cannot be valid
         }
 
         return validQuizzes;

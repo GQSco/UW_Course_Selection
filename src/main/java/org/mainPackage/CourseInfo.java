@@ -150,7 +150,7 @@ public class CourseInfo {
             }else if (0 < i && i < 4) {
                 if (section.isEmpty() && info[i].matches("\\w{1,2}")) { // Section
                     section = info[i];
-                } else if (info[i].contains("QZ") || info[i].contains("Laboratory")) { // TODO make sure this works, laboratories are slightly different but still act as quizzes. check EE 201
+                } else if (info[i].contains("QZ")) { // TODO make sure this works, laboratories are slightly different but still act as quizzes. check EE 201
                     type = "Quiz"; // TODO it could be a laboratory too
                 }
             } else {
